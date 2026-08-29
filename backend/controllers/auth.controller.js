@@ -208,9 +208,7 @@ const forgotPassword = async (req, res, next) => {
 
     res.status(200).json({ 
       success: true, 
-      message: 'Password reset link sent to your email!',
-      resetToken: process.env.NODE_ENV !== 'production' ? resetToken : undefined,
-      resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined
+      message: 'Password reset link sent to your email!'
     });
   } catch (error) {
     next(error);
