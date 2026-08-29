@@ -46,9 +46,7 @@
 
 ---
 
-## 📝 Summary
-
-**NutriVedic** is a next-generation holistic health platform designed specifically for Indian diets and lifestyle patterns. By fusing **Google Gemini Multimodal AI Vision** with ancient **Ayurvedic principles (Pitta, Kapha, Vata)**, NutriVedic transforms how households track nutrition, manage kitchen inventory, and eliminate food waste.
+**NutriVedic** is a next-generation holistic health platform designed specifically for Indian diets and lifestyle patterns. By fusing **Google Gemini 3.6 Flash Multimodal AI Vision** with condition-specific clinical nutrition and ancient **Ayurvedic principles (Pitta, Kapha, Vata)**, NutriVedic transforms how households track nutrition, manage kitchen inventory, and eliminate food waste.
 
 ---
 
