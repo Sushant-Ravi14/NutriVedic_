@@ -25,9 +25,9 @@ export const Settings = () => {
 
   const handleSaveProfile = async (formData) => {
     const { firstName, lastName, email, age, weight, height, goal } = formData;
-    const numWeight = Number(weight) || 72;
-    const numHeight = Number(height) || 175;
-    const numAge = Number(age) || 28;
+    const numWeight = Number(weight) || profile?.weightKg || profile?.weight || 70;
+    const numHeight = Number(height) || profile?.heightCm || profile?.height || 170;
+    const numAge = Number(age) || profile?.age || 25;
 
     // Calculate TDEE and Target Calories dynamically from updated biometrics
     const bmr = 10 * numWeight + 6.25 * numHeight - 5 * numAge + 5;
@@ -41,8 +41,11 @@ export const Settings = () => {
       ...profile,
       age: numAge,
       weight: numWeight,
+      weightKg: numWeight,
       height: numHeight,
+      heightCm: numHeight,
       targetCalories,
+      targetKcal: targetCalories,
       goal
     };
 

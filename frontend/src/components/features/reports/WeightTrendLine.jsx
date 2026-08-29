@@ -4,19 +4,24 @@ import { Card } from '../../ui/Card';
 export const WeightTrendLine = ({ points = [] }) => {
   if (!points || points.length === 0) return null;
 
-  const weights = points.map((p) => p.weight);
+  const validPoints = points.filter(p => p && p.weight != null);
+  if (validPoints.length === 0) return null;
+
+  const weights = validPoints.map((p) => Number(p.weight) || 70);
   const minW = Math.min(...weights) - 0.5;
   const maxW = Math.max(...weights) + 0.5;
   const range = maxW - minW || 1;
 
   const width = 600;
   const height = 160;
-  const padding = 20;
+  const padding = 30;
 
-  const coords = points.map((p, idx) => {
-    const x = padding + (idx / (points.length - 1)) * (width - 2 * padding);
-    const y = height - padding - ((p.weight - minW) / range) * (height - 2 * padding);
-    return { x, y, weight: p.weight, date: p.date };
+  const coords = validPoints.map((p, idx) => {
+    const x = validPoints.length === 1 
+      ? width / 2 
+      : padding + (idx / (validPoints.length - 1)) * (width - 2 * padding);
+    const y = height - padding - (((Number(p.weight) || 70) - minW) / range) * (height - 2 * padding);
+    return { x, y, weight: Number(p.weight) || 70, date: p.date };
   });
 
   const polylinePoints = coords.map((c) => `${c.x},${c.y}`).join(' ');

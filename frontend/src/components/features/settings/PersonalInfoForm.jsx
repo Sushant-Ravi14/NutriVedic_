@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '../../ui/Input';
 import { Button } from '../../ui/Button';
 
 export const PersonalInfoForm = ({ initialData = {}, onSave }) => {
-  const [formData, setFormData] = useState({
-    firstName: initialData.firstName || 'Aarav',
-    lastName: initialData.lastName || 'Sharma',
-    email: initialData.email || 'aarav@example.com',
-    age: initialData.age || 28,
-    weight: initialData.weight || 72,
-    height: initialData.height || 175,
-    goal: initialData.goal || 'maintain'
+  const parseFormData = (data) => ({
+    firstName: data.firstName || '',
+    lastName: data.lastName || '',
+    email: data.email || '',
+    age: data.age !== undefined && data.age !== null ? data.age : '',
+    weight: data.weightKg ?? data.weight ?? '',
+    height: data.heightCm ?? data.height ?? '',
+    goal: data.goal || 'maintain'
   });
+
+  const [formData, setFormData] = useState(() => parseFormData(initialData));
+
+  useEffect(() => {
+    setFormData(parseFormData(initialData));
+  }, [
+    initialData.firstName,
+    initialData.lastName,
+    initialData.email,
+    initialData.age,
+    initialData.weight,
+    initialData.weightKg,
+    initialData.height,
+    initialData.heightCm,
+    initialData.goal
+  ]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

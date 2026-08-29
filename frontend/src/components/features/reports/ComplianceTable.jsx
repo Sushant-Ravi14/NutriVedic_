@@ -20,19 +20,29 @@ export const ComplianceTable = ({ rows = [] }) => {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, idx) => (
-              <tr key={row.date} className={idx % 2 === 0 ? 'bg-white' : 'bg-surface'}>
-                <td className="py-3 px-4 font-medium text-black">{row.date}</td>
-                <td className="py-3 px-4 flex items-center gap-1.5">
-                  <span>{row.icon}</span>
-                  <span className="font-sans text-[12px]">{row.status}</span>
-                </td>
-                <td className="py-3 px-4 text-black">{row.kcal} kcal</td>
-                <td className={`py-3 px-4 text-right ${row.delta <= 0 ? 'text-positive' : 'text-negative'}`}>
-                  {row.delta > 0 ? `▲ +${row.delta}` : `▼ ${row.delta}`}
-                </td>
-              </tr>
-            ))}
+            {rows.map((row, idx) => {
+              const cals = Number(row.kcal ?? row.calories ?? 0);
+              const target = Number(row.target ?? 2000);
+              const delta = row.delta !== undefined ? Number(row.delta) : (cals - target);
+              const statusText = row.status || (cals >= target * 0.9 && cals <= target * 1.1 ? 'On Track' : cals < target ? 'Under Target' : 'Over Limit');
+              const icon = row.icon || (statusText.toLowerCase().includes('on track') ? '✅' : statusText.toLowerCase().includes('under') ? '⚠️' : '🔺');
+
+              return (
+                <tr key={row.date || idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-surface'}>
+                  <td className="py-3 px-4 font-medium text-black">{row.date}</td>
+                  <td className="py-3 px-4">
+                    <span className="inline-flex items-center gap-1.5 font-sans text-[12px]">
+                      <span>{icon}</span>
+                      <span>{statusText}</span>
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-black font-medium">{cals.toLocaleString()} kcal</td>
+                  <td className={`py-3 px-4 text-right ${delta <= 0 ? 'text-amber-600' : 'text-red-600'}`}>
+                    {delta > 0 ? `▲ +${delta.toLocaleString()}` : delta < 0 ? `▼ ${delta.toLocaleString()}` : `✓ 0`}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

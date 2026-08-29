@@ -51,40 +51,36 @@ export const Reports = () => {
     }
   };
 
-  // 4. Map Weekly Bar Data
+  // 4. Map Past 7 Days Rolling Window for Bar Data
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const weeklyBarData = summaries.map((s) => {
-    const dateObj = new Date(s.date);
-    const dayName = daysOfWeek[dateObj.getDay()] || s.date;
-    return {
+  const past7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const iso = d.toISOString().split('T')[0];
+    const dayName = daysOfWeek[d.getDay()];
+    const summary = summaries.find((s) => s.date === iso);
+    past7Days.push({
       day: dayName,
-      calories: s.totalCalories || 0
-    };
-  });
-
-  const finalWeeklyBarData = weeklyBarData.length > 0 ? weeklyBarData : [
-    { day: 'Mon', calories: 0 },
-    { day: 'Tue', calories: 0 },
-    { day: 'Wed', calories: 0 },
-    { day: 'Thu', calories: 0 },
-    { day: 'Fri', calories: 0 },
-    { day: 'Sat', calories: 0 },
-    { day: 'Sun', calories: 0 }
-  ];
+      date: iso,
+      calories: Number(summary?.totalCalories) || 0,
+      target: Number(summary?.targetCalories) || userTargetCalories
+    });
+  }
 
   // 5. Calculate Macro Split over the week
-  const totalProtein = summaries.reduce((acc, curr) => acc + (curr.totalProtein || 0), 0);
-  const totalCarbs = summaries.reduce((acc, curr) => acc + (curr.totalCarbs || 0), 0);
-  const totalFat = summaries.reduce((acc, curr) => acc + (curr.totalFat || 0), 0);
+  const totalProtein = summaries.reduce((acc, curr) => acc + (Number(curr.totalProtein) || 0), 0);
+  const totalCarbs = summaries.reduce((acc, curr) => acc + (Number(curr.totalCarbs) || 0), 0);
+  const totalFat = summaries.reduce((acc, curr) => acc + (Number(curr.totalFat) || 0), 0);
   
   const totalMacros = totalProtein + totalCarbs + totalFat;
   const macroSplit = totalMacros > 0 ? {
-    protein: Math.round((totalProtein / totalMacros) * 100),
-    carbs: Math.round((totalCarbs / totalMacros) * 100),
-    fat: Math.round((totalFat / totalMacros) * 100)
+    carbs: totalCarbs,
+    protein: totalProtein,
+    fat: totalFat
   } : {
-    protein: 20,
     carbs: 55,
+    protein: 20,
     fat: 25
   };
 
@@ -136,7 +132,7 @@ export const Reports = () => {
       {/* Chart Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-2">
-          <BarChart data={finalWeeklyBarData} />
+          <BarChart data={past7Days} target={userTargetCalories} />
         </div>
         <div>
           <MacroSplitChart split={macroSplit} />
@@ -161,13 +157,22 @@ export const Reports = () => {
       </div>
 
       {/* Compliance Table */}
-      <ComplianceTable rows={summaries.map(s => ({
-        date: s.date,
-        calories: s.totalCalories || 0,
-        target: s.targetCalories || userTargetCalories,
-        compliance: s.compliancePercentage || 0,
-        status: s.status === 'on_track' ? 'On Track' : s.status === 'under' ? 'Under' : 'Over Limit'
-      }))} />
+      <ComplianceTable rows={summaries.map(s => {
+        const cals = Number(s.totalCalories) || 0;
+        const tgt = Number(s.targetCalories) || userTargetCalories;
+        const delta = cals - tgt;
+        const isUnder = cals < tgt * 0.9;
+        const isOver = cals > tgt * 1.1;
+        return {
+          date: s.date,
+          calories: cals,
+          kcal: cals,
+          target: tgt,
+          delta,
+          status: isUnder ? 'Under Target' : isOver ? 'Over Limit' : 'On Track',
+          icon: isUnder ? '⚠️' : isOver ? '🔺' : '✅'
+        };
+      })} />
     </PageWrapper>
   );
 };
