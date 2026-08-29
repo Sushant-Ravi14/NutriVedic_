@@ -9,6 +9,21 @@ export const useAuth = () => {
   const addToast = useUIStore((state) => state.addToast);
   const queryClient = useQueryClient();
 
+  const normalizeProfile = (userProfile) => {
+    if (!userProfile) return null;
+    const w = userProfile.weightKg ?? userProfile.weight;
+    const h = userProfile.heightCm ?? userProfile.height;
+    return {
+      ...userProfile,
+      weight: w,
+      weightKg: w,
+      height: h,
+      heightCm: h,
+      targetCalories: userProfile.targetKcal ?? userProfile.targetCalories,
+      targetKcal: userProfile.targetKcal ?? userProfile.targetCalories
+    };
+  };
+
   const loginMutation = useMutation({
     mutationFn: loginApi,
     onSuccess: async (data) => {
@@ -17,8 +32,8 @@ export const useAuth = () => {
       try {
         const profileData = await getProfileApi();
         const userProfile = profileData?.profile || profileData;
-        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.targetKcal)) {
-          finalProfile = userProfile;
+        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.height || userProfile.weight || userProfile.targetKcal)) {
+          finalProfile = normalizeProfile(userProfile);
         }
       } catch (e) {}
 
@@ -39,8 +54,8 @@ export const useAuth = () => {
       try {
         const profileData = await getProfileApi();
         const userProfile = profileData?.profile || profileData;
-        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.targetKcal)) {
-          finalProfile = userProfile;
+        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.height || userProfile.weight || userProfile.targetKcal)) {
+          finalProfile = normalizeProfile(userProfile);
         }
       } catch (e) {}
 
@@ -61,8 +76,8 @@ export const useAuth = () => {
       try {
         const profileData = await getProfileApi();
         const userProfile = profileData?.profile || profileData;
-        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.targetKcal)) {
-          finalProfile = userProfile;
+        if (userProfile && (userProfile.age || userProfile.heightCm || userProfile.weightKg || userProfile.height || userProfile.weight || userProfile.targetKcal)) {
+          finalProfile = normalizeProfile(userProfile);
         }
       } catch (e) {}
 
@@ -87,7 +102,8 @@ export const useAuth = () => {
     mutationFn: saveProfileApi,
     onSuccess: (data) => {
       const profileData = data.profile || data;
-      updateProfile(profileData);
+      const normalized = normalizeProfile(profileData);
+      updateProfile(normalized);
       
       queryClient.invalidateQueries(['reportsAnalytics']);
       queryClient.invalidateQueries(['dailySummary']);

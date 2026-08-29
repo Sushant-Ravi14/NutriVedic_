@@ -6,17 +6,18 @@ import { Button } from '../components/ui/Button';
 import { useAuth } from '../hooks/useAuth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/authStore';
+import { useUIStore } from '../store/uiStore';
 
 export const Auth = () => {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'signup' ? 'signup' : 'login';
   const [tab, setTab] = useState(initialTab);
+  const addToast = useUIStore((state) => state.addToast);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-
 
   const [authError, setAuthError] = useState('');
 
@@ -25,16 +26,64 @@ export const Auth = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const profile = useAuthStore((state) => state.profile);
 
+  // Password strength calculation
+  const getPasswordStrength = (pass) => {
+    if (!pass) return { score: 0, label: '', color: '', text: '' };
+    let score = 0;
+    if (pass.length >= 8) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+    switch (score) {
+      case 1:
+        return { score: 1, label: 'Weak', color: 'bg-red-500', text: 'text-red-600' };
+      case 2:
+        return { score: 2, label: 'Fair', color: 'bg-amber-500', text: 'text-amber-600' };
+      case 3:
+        return { score: 3, label: 'Good', color: 'bg-blue-500', text: 'text-blue-600' };
+      case 4:
+        return { score: 4, label: 'Strong', color: 'bg-emerald-500', text: 'text-emerald-600' };
+      default:
+        return { score: 0, label: 'Very Weak', color: 'bg-neutral-300', text: 'text-neutral-400' };
+    }
+  };
+
+  const passwordStrength = getPasswordStrength(password);
+
+  const generateStrongPassword = () => {
+    const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%&*';
+    let generated = 'Nv@';
+    for (let i = 0; i < 9; i++) {
+      generated += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    generated += '9$';
+    setPassword(generated);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(generated);
+      addToast('⚡ Strong password generated & copied to clipboard!', 'success');
+    } else {
+      addToast('⚡ Strong password generated!', 'success');
+    }
+  };
+
+  const checkProfileAndNavigate = () => {
+    const currentProfile = useAuthStore.getState().profile;
+    const hasCompleteProfile = Boolean(
+      currentProfile && (currentProfile.age || currentProfile.weightKg || currentProfile.weight || currentProfile.heightCm || currentProfile.height)
+    );
+    if (!hasCompleteProfile) {
+      navigate('/onboarding', { replace: true });
+    } else {
+      navigate('/dashboard', { replace: true });
+    }
+  };
+
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         await googleLogin(tokenResponse.access_token);
-        const currentProfile = useAuthStore.getState().profile;
-        if (!currentProfile) {
-          navigate('/onboarding');
-        } else {
-          navigate('/dashboard');
-        }
+        checkProfileAndNavigate();
       } catch (error) {
         setAuthError('Google authentication failed');
       }
@@ -45,13 +94,9 @@ export const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      if (!profile) {
-        navigate('/onboarding');
-      } else {
-        navigate('/dashboard');
-      }
+      checkProfileAndNavigate();
     }
-  }, [isAuthenticated, profile, navigate]);
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,20 +104,10 @@ export const Auth = () => {
     try {
       if (tab === 'login') {
         await login({ email, password });
-        const currentProfile = useAuthStore.getState().profile;
-        if (!currentProfile) {
-          navigate('/onboarding');
-        } else {
-          navigate('/dashboard');
-        }
+        checkProfileAndNavigate();
       } else {
         await register({ email, password, firstName, lastName });
-        const currentProfile = useAuthStore.getState().profile;
-        if (!currentProfile) {
-          navigate('/onboarding');
-        } else {
-          navigate('/dashboard');
-        }
+        checkProfileAndNavigate();
       }
     } catch (err) {
       const msg = err.response?.data?.error || err.response?.data?.errors?.[0]?.msg || err.message || 'Authentication failed';
@@ -171,14 +206,49 @@ export const Auth = () => {
                     required
                   />
 
-                  <Input
-                    label="PASSWORD"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <Input
+                      label="PASSWORD"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+
+                    {tab === 'signup' && (
+                      <div className="flex flex-col gap-1.5 mt-0.5">
+                        <div className="flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={generateStrongPassword}
+                            className="font-mono text-[10px] text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <span>⚡ Auto-Suggest Strong Password</span>
+                          </button>
+                          {password && (
+                            <span className={`font-mono text-[10px] font-bold ${passwordStrength.text}`}>
+                              {passwordStrength.label}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* 4-Segment Strength Bar */}
+                        {password && (
+                          <div className="grid grid-cols-4 gap-1.5 h-1.5 w-full mt-0.5">
+                            {[1, 2, 3, 4].map((level) => (
+                              <div
+                                key={level}
+                                className={`h-full rounded-full transition-colors duration-300 ${
+                                  level <= passwordStrength.score ? passwordStrength.color : 'bg-neutral-200'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               </AnimatePresence>
 
