@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
-import { loginApi, registerApi, logoutApi, googleAuthApi } from '../api/auth.api';
+import { loginApi, registerApi, logoutApi, googleAuthApi, forgotPasswordApi, resetPasswordApi } from '../api/auth.api';
 import { getProfileApi, saveProfileApi } from '../api/user.api';
 import { useUIStore } from '../store/uiStore';
 
@@ -117,6 +117,28 @@ export const useAuth = () => {
     }
   });
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPasswordApi,
+    onSuccess: (data) => {
+      addToast(data.message || 'Password reset link sent to your email!', 'success');
+    },
+    onError: (err) => {
+      const msg = err.response?.data?.error || err.message || 'Failed to send reset email';
+      addToast(msg, 'error');
+    }
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPasswordApi,
+    onSuccess: (data) => {
+      addToast(data.message || 'Password reset successfully! Please log in.', 'success');
+    },
+    onError: (err) => {
+      const msg = err.response?.data?.error || err.message || 'Password reset failed';
+      addToast(msg, 'error');
+    }
+  });
+
   return {
     user,
     profile,
@@ -127,6 +149,9 @@ export const useAuth = () => {
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
     saveProfile: saveProfileMutation.mutateAsync,
-    isLoading: loginMutation.isLoading || registerMutation.isLoading || googleLoginMutation.isLoading
+    forgotPassword: forgotPasswordMutation.mutateAsync,
+    resetPassword: resetPasswordMutation.mutateAsync,
+    isLoading: loginMutation.isLoading || registerMutation.isLoading || googleLoginMutation.isLoading || forgotPasswordMutation.isLoading || resetPasswordMutation.isLoading
   };
 };
+

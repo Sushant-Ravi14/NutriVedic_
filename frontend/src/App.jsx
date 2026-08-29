@@ -22,6 +22,7 @@ const DietPlan = lazy(() => import('./pages/DietPlan').then(m => ({ default: m.D
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
 const Notifications = lazy(() => import('./pages/Notifications').then(m => ({ default: m.Notifications })));
+const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 
 // Layout wrapper for protected app pages
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth-success" element={<Auth />} />
+            <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
 
             <Route
               path="/onboarding"

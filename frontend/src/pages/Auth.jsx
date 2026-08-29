@@ -21,7 +21,13 @@ export const Auth = () => {
 
   const [authError, setAuthError] = useState('');
 
-  const { login, googleLogin, register, isLoading } = useAuth();
+  const [forgotModalOpen, setForgotModalOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState('');
+  const [forgotError, setForgotError] = useState('');
+  const [devResetUrl, setDevResetUrl] = useState('');
+
+  const { login, googleLogin, register, forgotPassword, isLoading } = useAuth();
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const profile = useAuthStore((state) => state.profile);
@@ -115,6 +121,36 @@ export const Auth = () => {
     }
   };
 
+  const handleOpenForgotModal = () => {
+    setForgotEmail(email);
+    setForgotError('');
+    setForgotSuccess('');
+    setDevResetUrl('');
+    setForgotModalOpen(true);
+  };
+
+  const handleSendResetEmail = async (e) => {
+    e.preventDefault();
+    setForgotError('');
+    setForgotSuccess('');
+    setDevResetUrl('');
+
+    if (!forgotEmail) {
+      setForgotError('Please enter your email address');
+      return;
+    }
+
+    try {
+      const res = await forgotPassword(forgotEmail);
+      setForgotSuccess(res?.message || 'Password reset link sent to your email!');
+      if (res?.resetUrl) {
+        setDevResetUrl(res.resetUrl);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message || 'Failed to send reset link';
+      setForgotError(msg);
+    }
+  };
 
   const handleGoogleLogin = () => {
     try {
@@ -123,6 +159,8 @@ export const Auth = () => {
       setAuthError('Google Single Sign-On is currently unavailable.');
     }
   };
+
+  const isInvalidCredsError = authError && (authError.toLowerCase().includes('credential') || authError.toLowerCase().includes('password') || authError.toLowerCase().includes('invalid'));
 
   return (
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-4">
@@ -137,10 +175,24 @@ export const Auth = () => {
       </div>
 
       {/* Centered White Card 420px */}
-      <div className="w-full max-w-[420px] bg-white border border-border rounded-card p-6 md:p-8 shadow-none">
+      <div className="w-full max-w-[420px] bg-white border border-border rounded-card p-6 md:p-8 shadow-none relative">
         {authError && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-sans">
-            {authError}
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-sans flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <span>{authError}</span>
+            </div>
+            {isInvalidCredsError && tab === 'login' && (
+              <div className="pt-1.5 border-t border-red-200 flex items-center justify-between">
+                <span className="text-[11px] text-red-600">Forgot your password?</span>
+                <button
+                  type="button"
+                  onClick={handleOpenForgotModal}
+                  className="font-mono text-[11px] font-bold text-black underline hover:text-neutral-700 cursor-pointer"
+                >
+                  Reset Password →
+                </button>
+              </div>
+            )}
           </div>
         )}
         <>
@@ -148,7 +200,7 @@ export const Auth = () => {
             <div className="flex border-b border-border mb-6">
               <button
                 type="button"
-                onClick={() => setTab('login')}
+                onClick={() => { setTab('login'); setAuthError(''); }}
                 className={`flex-1 pb-3 font-sans font-medium text-sm transition-colors text-center ${
                   tab === 'login'
                     ? 'text-black border-b-2 border-black'
@@ -159,7 +211,7 @@ export const Auth = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setTab('signup')}
+                onClick={() => { setTab('signup'); setAuthError(''); }}
                 className={`flex-1 pb-3 font-sans font-medium text-sm transition-colors text-center ${
                   tab === 'signup'
                     ? 'text-black border-b-2 border-black'
@@ -207,8 +259,21 @@ export const Auth = () => {
                   />
 
                   <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[11px] uppercase tracking-[1.5px] text-label">
+                        PASSWORD
+                      </span>
+                      {tab === 'login' && (
+                        <button
+                          type="button"
+                          onClick={handleOpenForgotModal}
+                          className="font-mono text-[10px] text-muted hover:text-black transition-colors"
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
                     <Input
-                      label="PASSWORD"
                       type="password"
                       placeholder="••••••••"
                       value={password}
@@ -292,6 +357,97 @@ export const Auth = () => {
             </Button>
           </>
       </div>
+
+      {/* Forgot Password Modal */}
+      {forgotModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-[400px] bg-white border border-border rounded-card p-6 md:p-7 shadow-xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-black">Reset Password</h3>
+                <p className="font-sans text-xs text-muted mt-0.5">
+                  Enter your email address and we'll send you a password reset link.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setForgotModalOpen(false)}
+                className="text-muted hover:text-black p-1 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {forgotError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-sans">
+                {forgotError}
+              </div>
+            )}
+
+            {forgotSuccess ? (
+              <div className="flex flex-col gap-4 text-center py-2">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-lg font-sans">
+                  {forgotSuccess}
+                </div>
+                {devResetUrl && (
+                  <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-lg text-left">
+                    <span className="font-mono text-[10px] uppercase text-label block mb-1">Direct Reset Link:</span>
+                    <a
+                      href={devResetUrl}
+                      className="font-mono text-xs text-black underline break-all font-semibold hover:text-neutral-700"
+                    >
+                      {devResetUrl}
+                    </a>
+                  </div>
+                )}
+                <Button
+                  variant="primary"
+                  fullWidth
+                  onClick={() => setForgotModalOpen(false)}
+                >
+                  Done
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSendResetEmail} className="flex flex-col gap-4">
+                <Input
+                  label="EMAIL ADDRESS"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                />
+
+                <div className="flex items-center gap-2 mt-1">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    fullWidth
+                    onClick={() => setForgotModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    fullWidth
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Sending...' : 'Send Link'}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
+
