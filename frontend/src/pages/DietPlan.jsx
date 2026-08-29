@@ -134,8 +134,13 @@ export const DietPlan = () => {
         <DailyTotals totals={dailyTotals} />
       </div>
 
-      {/* Notes Card */}
-      <NotesCard notes={plan?.notes} conditions={plan?.conditions} />
+      {/* Notes Card with Conditions & Foods */}
+      <NotesCard
+        notes={plan?.notes}
+        conditions={plan?.conditions}
+        preferFoods={plan?.preferFoods}
+        avoidFoods={plan?.avoidFoods}
+      />
 
       {/* Swap Meal Confirmation Modal */}
       <Modal
