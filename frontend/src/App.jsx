@@ -7,6 +7,7 @@ import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { SkeletonLoader } from './components/ui/SkeletonLoader';
 import { useOffline } from './hooks/useOffline';
+import { useHydrationReminder } from './hooks/useHydrationReminder';
 
 // Non-lazy for fast initial load
 import { Landing } from './pages/Landing';
@@ -51,6 +52,7 @@ const LoadingFallback = () => (
 
 export default function App() {
   useOffline();
+  useHydrationReminder();
 
   return (
     <ErrorBoundary>
