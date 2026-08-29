@@ -40,6 +40,7 @@ const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    if (process.env.NODE_ENV === 'development') return callback(null, true);
     const cleanOrigin = origin.replace(/\/$/, '');
     if (cleanOrigin === clientUrl) {
       return callback(null, true);
@@ -97,7 +98,7 @@ const startServer = async () => {
     startDailySummaryJob();
     startWeeklyReportJob();
 
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     });
 

@@ -28,10 +28,17 @@ const updateProfile = async (req, res, next) => {
 
     const body = req.body || {};
 
+    if (body.firstName || body.lastName) {
+      const userUpdates = {};
+      if (body.firstName) userUpdates.firstName = body.firstName;
+      if (body.lastName) userUpdates.lastName = body.lastName;
+      await User.findByIdAndUpdate(req.user._id, userUpdates);
+    }
+
     // Normalize field names from frontend variations
-    const age = body.age || profile.age;
+    const age = body.age !== undefined && body.age !== null ? Number(body.age) : profile.age;
     const weightKg = Number(body.weightKg || body.weight || profile.weightKg || 70);
-    const heightCm = Number(body.heightCm || body.height || profile.heightCm || 175);
+    const heightCm = Number(body.heightCm || body.height || profile.heightCm || 170);
     const gender = body.gender || body.sex || profile.gender || 'male';
     const activityLevel = body.activityLevel || profile.activityLevel || 'moderate';
     const goal = body.goal || profile.goal || 'maintain';
