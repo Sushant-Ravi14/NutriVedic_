@@ -42,7 +42,7 @@
 - 🐙 **Public GitHub Repository**: [https://github.com/Sushant-Ravi14/NutriVedic](https://github.com/Sushant-Ravi14/NutriVedic)
 - 🌐 **Live Deployed API (Render)**: [https://nutrivedic-backend.onrender.com](https://nutrivedic-backend.onrender.com)
 - 📚 **Interactive Postman API Docs**: [NutriVedic Postman Documentation](https://documenter.getpostman.com/view/50840877/2sBY4WmveL)
-- 📹 **Demo Video Link**: [Watch Project Demo Video](YOUR_DEMO_VIDEO_LINK_HERE) *(Replace with video link)*
+- 📹 **Demo Presentation**: Complete walkthrough covering AI Food Scanner, Therapeutic Diets & Hydration Alerts
 
 ---
 
@@ -119,23 +119,25 @@ NutriVedic’s flagship $9/month AI Assistant bridges the gap between healthy ea
 
 ## 🚀 Key Features
 
-- 📸 **AI Multimodal Food Recognition**: Snap a photo to get accurate macro breakdowns, ingredient estimates, and Ayurvedic insights powered by **Google Gemini 1.5/2.0 Flash**.
-- 🥬 **Produce Freshness & Decay Detector**: Scan raw fruits and vegetables to detect decay percentages, estimated shelf life, and optimal storage recommendations.
-- 🩺 **Therapeutic Condition Alignment**: Tailors meals for conditions such as *Type 2 Diabetes, PCOS/PCOD, Hypertension, Thyroid, and Fatty Liver*.
-- 📊 **Dynamic TDEE & Calorie Engine**: Calculates precise daily calorie targets using Harris-Benedict & Katch-McArdle formulas.
-- 📦 **Barcode & USDA Integration**: Scans packaged goods using OpenFoodFacts and USDA FoodData Central.
-- 🔔 **Smart Kitchen Inventory Alerter**: Background cron jobs trigger push/email notifications before produce expires.
+- 📸 **AI Multimodal Vision Scanner**: Snap or upload a photo to instantly identify Indian dishes, compute portion weight in grams, and resolve complete macro/micronutrient profiles powered by **Google Gemini 3.6 Flash**.
+- 🥬 **Produce Freshness & Spoilage AI Detector**: Scan raw fruits and vegetables to detect freshness score (0-100%), spoilage signs, remaining shelf life, and optimal Ayurvedic storage guidance.
+- 🩺 **Therapeutic Condition-Specific Nutrition**: Automatically tailors 7-day Indian meal plans for chronic conditions such as *Type 2 Diabetes, Hypertension, PCOS/PCOD, Thyroid (Hypo), High Cholesterol, and Fatty Liver* with zero fried/harmful dishes.
+- 🔄 **Real-Time AI Meal Swapping**: Swap any scheduled meal with one click for an Ayurvedic, condition-safe equivalent.
+- 💧 **Adaptive Hydration & Local Notifications**: Calculates dynamic water intake based on body weight ($\text{Weight} \times 35\text{ ml}$), with background reminder intervals and persistent in-app message box logging.
+- 🔐 **Enterprise Auth & Password Recovery**: Real-time 4-segment password strength meter, 1-click **Auto-Suggest Strong Password** generator, wrong-password auto-recovery banner, and secure Gmail SMTP password reset links.
+- 📊 **Synchronized Nutrition Dashboard**: Real-time consistency between Dashboard and Food Log diary with live daily calorie donut charts, macro splits, and water intake counters.
+- 📦 **Barcode & USDA Food Database**: Search 100,000+ packaged goods and Indian recipes via OpenFoodFacts and USDA FoodData Central.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 18, Vite, Framer Motion, Vanilla CSS Tokens, Zustand, Lucide React
-- **Backend**: Node.js, Express.js, Mongoose, Passport.js (Google OAuth 2.0), JWT Authentication
-- **AI & External APIs**: Google Gemini Multimodal Vision API, USDA FoodData Central, OpenFoodFacts
-- **Database & Cache**: MongoDB Atlas, Redis Cloud
-- **Services & Storage**: Cloudinary (Image Hosting), Nodemailer (Email OTPs), Sentry (Error Monitoring)
-- **Deployment**: Render Web Service
+- **Frontend**: React 18, Vite, TanStack React Query, Framer Motion, Tailwind CSS, Lucide Icons, PWA
+- **Backend**: Node.js, Express.js, MongoDB Atlas (Mongoose), JWT Auth, Nodemailer (Gmail SMTP)
+- **AI & External APIs**: Google Gemini Multimodal Vision API (`gemini-3.6-flash`), USDA FoodData Central, OpenFoodFacts
+- **Database & Cache**: MongoDB Atlas, Redis Upstash Cloud
+- **Services & Storage**: Cloudinary (Image Hosting), Nodemailer (Email Delivery), Sentry (Telemetry)
+- **Deployment**: Render Web Service (LAN-ready, host 0.0.0.0)
 
 ---
 
