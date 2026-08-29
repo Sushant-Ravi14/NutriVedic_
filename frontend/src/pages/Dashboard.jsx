@@ -73,7 +73,11 @@ export const Dashboard = () => {
         />
 
         <div className="flex flex-col gap-6">
-          <WaterTracker glasses={summary.waterGlasses} onToggleGlass={handleWaterToggle} />
+          <WaterTracker
+            glasses={summary.waterGlasses}
+            onToggleGlass={handleWaterToggle}
+            userWeight={profile?.weightKg || profile?.weight || 70}
+          />
           <StreakCard streak={summary.streak} />
         </div>
       </div>
