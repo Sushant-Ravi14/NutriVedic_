@@ -159,12 +159,15 @@ cd NutriVedic
 
 # 2. Setup Backend
 cd backend
-npm install
+## 🧪 Quick Test & Demo Commands
+
+```bash
+# Start backend server with Gmail SMTP and Gemini 3.6 Flash
+cd backend
 npm run dev
 
-# 3. Setup Frontend (in a new terminal)
-cd ../frontend
-npm install
+# Start frontend PWA dev server
+cd frontend
 npm run dev
 ```
 
