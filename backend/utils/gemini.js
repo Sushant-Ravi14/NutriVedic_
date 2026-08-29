@@ -8,7 +8,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 
 const identifyFood = async (imageBuffer, mimeType = 'image/jpeg', yoloHint = null, userProfile = null) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
     const yoloContext = yoloHint
       ? `\nAdditional context from object detection model: The image contains what appears to be "${yoloHint.yoloClass}" with ${(yoloHint.yoloConfidence * 100).toFixed(0)}% confidence. Use this as a hint but do not be constrained by it — identify the specific Indian dish name.`
@@ -82,7 +82,7 @@ IF it is food, analyze the image carefully and return ONLY a valid JSON object w
 
 const analyzeProduceFreshness = async (imageBuffer, mimeType = 'image/jpeg', userProfile = null) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
     const healthContext = userProfile && (userProfile.healthConditions?.length > 0 || userProfile.goal)
       ? `\nUser Profile: Goal is ${userProfile.goal || 'maintain'}, Health Conditions: ${userProfile.healthConditions?.join(', ') || 'None'}. Provide a brief 1-2 sentence personalized health note on consuming this produce in the "healthNote" JSON field.`
@@ -393,7 +393,7 @@ const generateDietPlan = async ({ age, gender, heightCm, weightKg, activityLevel
     };
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -449,7 +449,7 @@ Ensure all meals are healthy Indian dishes tailored for the condition: ${conditi
 
 const estimateFreshness = async (itemName, freshnessScore, freshnessClass) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
     const prompt = `Given produce: ${itemName}, score: ${freshnessScore}, class: ${freshnessClass}.
 Return ONLY valid JSON:
 {
@@ -478,7 +478,7 @@ Return ONLY valid JSON:
 
 const swapMeal = async (userProfile, day, slot, existingMealName) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
     const prompt = `Generate 1 replacement meal for ${slot} on ${day} (not ${existingMealName}). Return ONLY JSON.`;
     const result = await model.generateContent(prompt);
     let responseText = result.response.text();
