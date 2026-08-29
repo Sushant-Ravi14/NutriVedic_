@@ -26,14 +26,36 @@ export const FoodLog = () => {
   };
 
   const rawSummary = foodLog?.summary || {};
-  const summary = {
-    consumedKcal: Math.round(rawSummary.totalCalories || 0),
-    targetKcal: rawSummary.targetCalories || 2000,
-    protein: Math.round(rawSummary.totalProtein || 0),
-    carbs: Math.round(rawSummary.totalCarbs || 0),
-    fat: Math.round(rawSummary.totalFat || 0)
-  };
   const meals = foodLog?.meals || [];
+
+  // Calculate total consumed directly from logged meal items
+  const totalConsumedFromMeals = meals.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.calories) || 0), 0);
+  }, 0);
+
+  const totalProteinFromMeals = meals.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.protein) || 0), 0);
+  }, 0);
+
+  const totalCarbsFromMeals = meals.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.carbs) || 0), 0);
+  }, 0);
+
+  const totalFatFromMeals = meals.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.fat) || 0), 0);
+  }, 0);
+
+  const consumedCalories = totalConsumedFromMeals > 0 
+    ? Math.round(totalConsumedFromMeals) 
+    : Math.round(rawSummary.totalCalories || 0);
+
+  const summary = {
+    consumedKcal: consumedCalories,
+    targetKcal: rawSummary.targetCalories || 2000,
+    protein: totalProteinFromMeals > 0 ? Math.round(totalProteinFromMeals) : Math.round(rawSummary.totalProtein || 0),
+    carbs: totalCarbsFromMeals > 0 ? Math.round(totalCarbsFromMeals) : Math.round(rawSummary.totalCarbs || 0),
+    fat: totalFatFromMeals > 0 ? Math.round(totalFatFromMeals) : Math.round(rawSummary.totalFat || 0)
+  };
 
   return (
     <PageWrapper>

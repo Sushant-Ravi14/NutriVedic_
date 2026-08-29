@@ -22,19 +22,47 @@ export const Dashboard = () => {
   const { data: currentPlan } = useCurrentPlan();
   const updateWaterMutation = useUpdateWater();
 
-  const targetKcal = foodLog?.summary?.targetCalories || profile?.targetKcal || profile?.targetCalories || 2000;
+  const mealsList = foodLog?.meals || [];
+  
+  // Calculate total consumed calories directly from logged meal items as primary source of truth
+  const totalConsumedFromMeals = mealsList.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.calories) || 0), 0);
+  }, 0);
+
+  const totalProteinFromMeals = mealsList.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.protein) || 0), 0);
+  }, 0);
+
+  const totalCarbsFromMeals = mealsList.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.carbs) || 0), 0);
+  }, 0);
+
+  const totalFatFromMeals = mealsList.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.fat) || 0), 0);
+  }, 0);
+
+  const totalFiberFromMeals = mealsList.reduce((slotAcc, slot) => {
+    return slotAcc + (slot.items || []).reduce((itemAcc, item) => itemAcc + (Number(item.fiber) || 0), 0);
+  }, 0);
+
+  const targetKcal = Number(foodLog?.summary?.targetCalories || profile?.targetKcal || profile?.targetCalories || 2000);
   const calculatedMacros = calculateMacros(targetKcal);
 
+  // Consumed values prefer direct meal sums, fallback to summary
+  const consumedCalories = totalConsumedFromMeals > 0 
+    ? Math.round(totalConsumedFromMeals) 
+    : Math.round(foodLog?.summary?.totalCalories || 0);
+
   const summary = {
-    consumedKcal: Math.round(foodLog?.summary?.totalCalories || 0),
+    consumedKcal: consumedCalories,
     targetKcal,
-    protein: Math.round(foodLog?.summary?.totalProtein || 0),
+    protein: totalProteinFromMeals > 0 ? Math.round(totalProteinFromMeals) : Math.round(foodLog?.summary?.totalProtein || 0),
     targetProtein: profile?.proteinTargetG || calculatedMacros.protein,
-    carbs: Math.round(foodLog?.summary?.totalCarbs || 0),
+    carbs: totalCarbsFromMeals > 0 ? Math.round(totalCarbsFromMeals) : Math.round(foodLog?.summary?.totalCarbs || 0),
     targetCarbs: profile?.carbTargetG || calculatedMacros.carbs,
-    fat: Math.round(foodLog?.summary?.totalFat || 0),
+    fat: totalFatFromMeals > 0 ? Math.round(totalFatFromMeals) : Math.round(foodLog?.summary?.totalFat || 0),
     targetFat: profile?.fatTargetG || calculatedMacros.fat,
-    fiber: Math.round(foodLog?.summary?.totalFiber || 0),
+    fiber: totalFiberFromMeals > 0 ? Math.round(totalFiberFromMeals) : Math.round(foodLog?.summary?.totalFiber || 0),
     targetFiber: profile?.fiberTargetG || calculatedMacros.fiber,
     waterGlasses: foodLog?.summary?.waterGlasses || 0,
     streak: foodLog?.summary?.streak || 0
