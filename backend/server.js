@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173'
