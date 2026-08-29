@@ -83,6 +83,7 @@ NutriVedic’s flagship $9/month AI Assistant bridges the gap between healthy ea
 | **Produce Freshness & Decay AI Detection** | ✅ Yes (Shelf life estimation) | ❌ No | ❌ No |
 | **$9 AI Chef (Min. Prep Time Recipes)** | ✅ Yes | ❌ No | ❌ No |
 | **Indian Food & Cuisine Precision** | ✅ Tailored for Indian Diets | ⚠️ Limited | ✅ Yes |
+| **Enterprise Password Strength & Gmail Reset** | ✅ Built-in SMTP & Strength Bar | ⚠️ Basic | ⚠️ Basic |
 | **Automated Expiration & Fridge Inventory** | ✅ Built-in Waste Alerter | ❌ No | ❌ No |
 | **Offline Sync Queue (PWA Ready)** | ✅ Yes | ❌ Requires Connection | ❌ Requires Connection |
 
