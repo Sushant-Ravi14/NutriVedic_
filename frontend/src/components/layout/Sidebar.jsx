@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../hooks/useNotifications';
 
 export const renderNavIcon = (svgType, fill = 'currentColor', className = 'shrink-0') => {
   switch (svgType) {
@@ -61,6 +62,9 @@ export const Sidebar = () => {
   const setActiveNav = useUIStore((state) => state.setActiveNav);
   const addToast = useUIStore((state) => state.addToast);
   const { logout } = useAuth();
+  const { data: notifications = [] } = useNotifications();
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   const handleLogout = async () => {
     try {
@@ -115,20 +119,34 @@ export const Sidebar = () => {
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const fill = isActive ? '#ffffff' : '#6b6b6b';
+          const isNotif = item.path === '/notifications';
 
           return (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={() => setActiveNav(item.label.toLowerCase())}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs lg:text-[14px] font-sans font-medium transition-colors ${
+              className={`flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg text-xs lg:text-[14px] font-sans font-medium transition-colors relative ${
                 isActive
                   ? 'bg-black text-white rounded-pill'
                   : 'text-muted hover:text-black hover:bg-surface'
               }`}
             >
-              {renderNavIcon(item.svgType, fill)}
-              <span className="hidden lg:inline">{item.label}</span>
+              <div className="flex items-center gap-3">
+                {renderNavIcon(item.svgType, fill)}
+                <span className="hidden lg:inline">{item.label}</span>
+              </div>
+
+              {/* Unread Count Badge */}
+              {isNotif && unreadCount > 0 && (
+                <span
+                  className={`px-1.5 py-0.2 min-w-[18px] text-[10px] font-mono font-bold rounded-full text-center shrink-0 ${
+                    isActive ? 'bg-white text-black' : 'bg-red-500 text-white'
+                  }`}
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </NavLink>
           );
         })}
