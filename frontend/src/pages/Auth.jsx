@@ -25,7 +25,6 @@ export const Auth = () => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState('');
   const [forgotError, setForgotError] = useState('');
-  const [devResetUrl, setDevResetUrl] = useState('');
 
   const { login, googleLogin, register, forgotPassword, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -122,10 +121,9 @@ export const Auth = () => {
   };
 
   const handleOpenForgotModal = () => {
-    setForgotEmail(email);
+    setForgotEmail(email || '');
     setForgotError('');
     setForgotSuccess('');
-    setDevResetUrl('');
     setForgotModalOpen(true);
   };
 
@@ -133,21 +131,18 @@ export const Auth = () => {
     e.preventDefault();
     setForgotError('');
     setForgotSuccess('');
-    setDevResetUrl('');
 
-    if (!forgotEmail) {
+    const targetEmail = (forgotEmail || '').trim().toLowerCase();
+    if (!targetEmail) {
       setForgotError('Please enter your email address');
       return;
     }
 
     try {
-      const res = await forgotPassword(forgotEmail);
+      const res = await forgotPassword(targetEmail);
       setForgotSuccess(res?.message || 'Password reset link sent to your email!');
-      if (res?.resetUrl) {
-        setDevResetUrl(res.resetUrl);
-      }
     } catch (err) {
-      const msg = err.response?.data?.error || err.message || 'Failed to send reset link';
+      const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to send reset link';
       setForgotError(msg);
     }
   };
@@ -390,27 +385,22 @@ export const Auth = () => {
             )}
 
             {forgotSuccess ? (
-              <div className="flex flex-col gap-4 text-center py-2">
-                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-lg font-sans">
-                  {forgotSuccess}
+              <div className="flex flex-col gap-4 text-center py-3">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-lg mx-auto">
+                  ✓
                 </div>
-                {devResetUrl && (
-                  <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-lg text-left">
-                    <span className="font-mono text-[10px] uppercase text-label block mb-1">Direct Reset Link:</span>
-                    <a
-                      href={devResetUrl}
-                      className="font-mono text-xs text-black underline break-all font-semibold hover:text-neutral-700"
-                    >
-                      {devResetUrl}
-                    </a>
-                  </div>
-                )}
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-black mb-1">Check Your Inbox</h4>
+                  <p className="font-sans text-xs text-muted leading-relaxed">
+                    We've sent a password reset link to <strong className="text-black">{forgotEmail}</strong>. Please check your email to set a new password.
+                  </p>
+                </div>
                 <Button
                   variant="primary"
                   fullWidth
                   onClick={() => setForgotModalOpen(false)}
                 >
-                  Done
+                  Got It
                 </Button>
               </div>
             ) : (
