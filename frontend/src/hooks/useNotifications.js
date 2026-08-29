@@ -5,7 +5,9 @@ export const useNotifications = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery(['notifications'], getNotificationsApi, {
-    staleTime: 1000 * 60 * 2
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   const markReadMutation = useMutation({
