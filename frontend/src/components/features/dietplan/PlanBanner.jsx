@@ -16,12 +16,13 @@ export const PlanBanner = ({ plan, onRegenerate, isRegenerating }) => {
           {plan?.description}
         </p>
 
-        {plan?.conditions && (
-          <div className="flex items-center gap-2 flex-wrap">
+        {plan?.conditions && plan.conditions.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap mt-3">
+            <span className="font-mono text-[11px] text-label uppercase tracking-wider">Targeted Conditions:</span>
             {plan.conditions.map((cond) => (
-              <Badge key={cond} variant="surface">
-                {cond}
-              </Badge>
+              <span key={cond} className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold bg-white text-black border border-white/20 shadow-sm">
+                ✚ {cond}
+              </span>
             ))}
           </div>
         )}
