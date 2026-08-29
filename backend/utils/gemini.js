@@ -145,6 +145,7 @@ IF it is produce, return ONLY valid raw JSON:
 };
 
 // ─── Dynamic Fallback Meal Library (Condition-Aware) ───────────────────────────
+// Comprehensive Therapeutic Meal Library for Indian Nutrition (Condition-Tailored)
 const MEAL_LIBRARY = {
   breakfast: {
     diabetes: [
@@ -212,12 +213,28 @@ const MEAL_LIBRARY = {
       { name: 'Dahi Wali Bhindi with Jowar Roti', description: 'Okra in yogurt gravy, potassium-rich', ingredients: ['Bhindi', 'Low-fat Curd', 'Jowar Roti', 'Mustard Seeds'], protein: 12, carbs: 38, fat: 6, cookingTime: 25 },
       { name: 'Lobia Curry with Brown Rice', description: 'Black-eyed peas curry with whole grain rice', ingredients: ['Lobia', 'Brown Rice', 'Tomato', 'Coriander', 'Minimal Salt'], protein: 18, carbs: 50, fat: 4, cookingTime: 35 }
     ],
+    'high cholesterol': [
+      { name: 'Oats & Moong Dal Khichdi with Steamed Broccoli', description: 'High soluble-fiber, zero-cholesterol lentil and oat pot', ingredients: ['Rolled Oats', 'Moong Dal', 'Broccoli', 'Turmeric', 'Garlic'], protein: 16, carbs: 46, fat: 4, cookingTime: 20 },
+      { name: 'Sorghum Jowar Roti with Palak Methi Dal', description: 'Fiber-rich flatbread with liver-detoxifying greens', ingredients: ['Jowar Flour', 'Palak', 'Methi', 'Garlic', 'Tomato'], protein: 17, carbs: 44, fat: 4, cookingTime: 30 },
+      { name: 'Steamed Fish Curry with Brown Rice', description: 'Omega-3 rich heart-healthy fish in light turmeric broth', ingredients: ['Fish Fillet', 'Brown Rice', 'Turmeric', 'Garlic', 'Mustard Seeds'], protein: 26, carbs: 42, fat: 6, cookingTime: 25 },
+      { name: 'Lobia (Black-Eyed Pea) Curry with Multigrain Roti', description: 'Plant sterol & fiber rich legume curry', ingredients: ['Lobia', 'Multigrain Flour', 'Tomato', 'Coriander', 'Cumin'], protein: 18, carbs: 48, fat: 4, cookingTime: 35 },
+      { name: 'Lauki Chana Dal with Cucumber Raita', description: 'Low-lipid bottle gourd lentil stew with low-fat curd', ingredients: ['Lauki', 'Chana Dal', 'Low-fat Curd', 'Cucumber', 'Mint'], protein: 15, carbs: 40, fat: 3, cookingTime: 30 },
+      { name: 'Tofu & Mixed Veggie Stir-Fry with Quinoa', description: 'Anti-inflammatory liver-protecting meal', ingredients: ['Tofu', 'Quinoa', 'Capsicum', 'Beans', 'Olive Oil'], protein: 19, carbs: 36, fat: 7, cookingTime: 20 },
+      { name: 'Bajra Roti with Baingan Bharta (No Oil)', description: 'Millet flatbread with roasted spiced eggplant', ingredients: ['Bajra Flour', 'Eggplant', 'Tomato', 'Garlic', 'Green Chilli'], protein: 13, carbs: 42, fat: 4, cookingTime: 30 }
+    ],
+    'fatty liver': [
+      { name: 'Garlic Dal Tadka with Brown Rice & Beet Salad', description: 'Liver detoxifying garlic lentils with whole grain rice', ingredients: ['Yellow Moong Dal', 'Brown Rice', 'Garlic', 'Beetroot', 'Lemon'], protein: 16, carbs: 48, fat: 4, cookingTime: 25 },
+      { name: 'Jowar Roti with Methi Sabzi & Low-fat Curd', description: 'Antioxidant fenugreek greens to reduce liver inflammation', ingredients: ['Jowar Flour', 'Methi', 'Low-fat Curd', 'Turmeric'], protein: 14, carbs: 42, fat: 3, cookingTime: 25 },
+      { name: 'Steamed Soya Chunk & Veggie Pulao', description: 'Lean plant protein with steamed brown rice and beans', ingredients: ['Soya Chunks', 'Brown Rice', 'Carrot', 'Beans', 'Cumin'], protein: 22, carbs: 46, fat: 4, cookingTime: 30 },
+      { name: 'Sprouted Moong Salad Bowl with Walnuts', description: 'Enzyme-rich raw sprouts with omega-3 walnuts', ingredients: ['Moong Sprouts', 'Walnuts', 'Pomegranate', 'Lemon Juice'], protein: 18, carbs: 32, fat: 8, cookingTime: 10 },
+      { name: 'Palak Dal with Multigrain Roti', description: 'Iron and glutathione rich spinach lentils', ingredients: ['Toor Dal', 'Palak', 'Multigrain Roti', 'Garlic'], protein: 17, carbs: 44, fat: 4, cookingTime: 30 }
+    ],
     healthy: [
       { name: 'Brown Rice with Dal Tadka & Bhindi Masala', description: 'Whole grains, tempered lentils and spiced okra', ingredients: ['Brown Rice', 'Yellow Dal', 'Okra', 'Onion', 'Tomato'], protein: 18, carbs: 65, fat: 12, cookingTime: 25 },
-      { name: 'Chole Bhature with Salad', description: 'Spiced chickpeas with deep-fried bread and salad', ingredients: ['Chickpeas', 'Maida', 'Onion', 'Tomato', 'Garam Masala'], protein: 20, carbs: 72, fat: 18, cookingTime: 40 },
+      { name: 'Paneer Tikka with Multigrain Roti & Salad', description: 'Grilled spiced cottage cheese with whole grain bread', ingredients: ['Paneer', 'Multigrain Flour', 'Capsicum', 'Onion', 'Curd'], protein: 20, carbs: 48, fat: 12, cookingTime: 30 },
       { name: 'Rajma Chawal with Raita', description: 'Kidney bean curry with rice and cooling yogurt', ingredients: ['Rajma', 'Basmati Rice', 'Curd', 'Onion', 'Tomato'], protein: 19, carbs: 68, fat: 8, cookingTime: 40 },
-      { name: 'Dal Makhani with Naan', description: 'Creamy black lentil curry with leavened bread', ingredients: ['Black Lentils', 'Rajma', 'Cream', 'Butter', 'Naan'], protein: 18, carbs: 62, fat: 16, cookingTime: 45 },
-      { name: 'Palak Paneer with Jeera Rice', description: 'Spinach cottage cheese curry with cumin rice', ingredients: ['Palak', 'Paneer', 'Basmati Rice', 'Cumin', 'Cream'], protein: 22, carbs: 60, fat: 14, cookingTime: 35 },
+      { name: 'Mixed Vegetable Curry with Whole Wheat Roti', description: 'Nutritious seasonal vegetable curry', ingredients: ['Mixed Vegetables', 'Whole Wheat Roti', 'Tomato', 'Spices'], protein: 14, carbs: 52, fat: 8, cookingTime: 30 },
+      { name: 'Palak Paneer with Jeera Brown Rice', description: 'Spinach cottage cheese curry with whole grain rice', ingredients: ['Palak', 'Paneer', 'Brown Rice', 'Cumin'], protein: 22, carbs: 55, fat: 12, cookingTime: 35 },
       { name: 'Chicken Curry with Roti', description: 'Tender chicken in aromatic masala gravy', ingredients: ['Chicken', 'Whole Wheat Roti', 'Onion', 'Tomato', 'Spices'], protein: 28, carbs: 45, fat: 12, cookingTime: 35 },
       { name: 'Vegetable Biryani with Raita', description: 'Aromatic spiced rice with mixed vegetables', ingredients: ['Basmati Rice', 'Mixed Vegetables', 'Biryani Masala', 'Curd'], protein: 14, carbs: 70, fat: 10, cookingTime: 45 }
     ]
@@ -331,7 +348,9 @@ const getFallbackPlan = (condition = 'Healthy', targetKcal = 2000) => {
   if (condLower.includes('diabet')) mealKey = 'diabetes';
   else if (condLower.includes('pcos') || condLower.includes('pcod')) mealKey = 'pcod';
   else if (condLower.includes('hypertension') || condLower.includes('blood pressure')) mealKey = 'hypertension';
+  else if (condLower.includes('liver')) mealKey = 'fatty liver';
   else if (condLower.includes('cholesterol')) mealKey = 'high cholesterol';
+  else if (condLower.includes('thyroid')) mealKey = 'pcod';
 
   const breakfasts = MEAL_LIBRARY.breakfast[mealKey] || MEAL_LIBRARY.breakfast.healthy;
   const lunches = MEAL_LIBRARY.lunch[mealKey] || MEAL_LIBRARY.lunch.healthy;
