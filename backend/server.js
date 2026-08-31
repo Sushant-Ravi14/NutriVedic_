@@ -22,6 +22,9 @@ const { startWeeklyReportJob } = require('./jobs/weeklyReport.job');
 
 const app = express();
 
+// Trust reverse proxies (Render, Railway, Heroku, Nginx, AWS)
+app.set('trust proxy', 1);
+
 // Initialize Sentry
 if (process.env.SENTRY_DSN) {
   Sentry.init({
@@ -35,17 +38,24 @@ if (process.env.SENTRY_DSN) {
 
 // Global Middleware
 app.use(helmet());
-const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+
+// Parse allowed client origins (supports comma-separated list in CLIENT_URL)
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map(url => url.trim().replace(/\/$/, ''))
+  .filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
+    // Allow non-browser requests or same-origin
     if (!origin) return callback(null, true);
     if (process.env.NODE_ENV === 'development') return callback(null, true);
+    
     const cleanOrigin = origin.replace(/\/$/, '');
-    if (cleanOrigin === clientUrl) {
+    if (allowedOrigins.includes(cleanOrigin)) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true
 }));
@@ -103,13 +113,16 @@ const startServer = async () => {
     });
 
     // Graceful Shutdown
-    process.on('SIGTERM', () => {
-      console.log('SIGTERM received. Shutting down gracefully.');
+    const shutdown = (signal) => {
+      console.log(`${signal} received. Shutting down gracefully.`);
       server.close(() => {
         console.log('Process terminated.');
         process.exit(0);
       });
-    });
+    };
+
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
 
   } catch (error) {
     console.error('Failed to start server:', error);
