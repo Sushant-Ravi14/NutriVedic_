@@ -10,7 +10,7 @@
   ### **AI-Powered Holistic Indian Nutrition & Smart Kitchen Management Platform**
 
   <p align="center">
-    <strong>🏆 Event:</strong> <code>HackMatrix 2026 - Round 2</code> &nbsp;|&nbsp;
+     &nbsp;&nbsp;
     <strong>Team Name:</strong> <code>Code Invaders</code>
   </p>
 
@@ -23,10 +23,6 @@
 </div>
 
 ---
-
-## 📄 Project & Hackathon Meta Information
-
-- **Event Name**: `HackMatrix 2026 - Round 2`
 - **Team Name**: `Code Invaders`
 - **Team Leader**: **Swaraj Prajapati** (Backend Architecture, AI & Deployment)
   - 📧 **Contact Email**: `swaraj.prajapati.cg@gmail.com`
